@@ -26,6 +26,8 @@ api文档生成 swaggo/swag v1.6.5
 
 若依前端组件 RuoYi v4.1.0
 
+初始化数据库的数据在 document的目录下面的 yjgov2_2020-03-27.sql 这个文件
+
 
 登陆账号和密码
 
