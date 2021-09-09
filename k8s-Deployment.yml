@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: yunjiego
+  namespace: kangle-control-dev
+  labels:
+    app: yunjiego
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: yunjiego
+  template:
+    metadata:
+      labels:
+        app: yunjiego
+    spec:
+      containers:
+        - name: yunjiego
+          image: docker-harbor.clubs999.com/public/golang:latest
+          command: ["/bin/sh"]
+          args: ["-c", "chmod +x ./yunjiego && ./yunjiego"]
+          securityContext:
+            enabled: true
+            privileged: true
+            allowPrivilegeEscalation: true
+            runAsUser: 0
+            fsGroup: 0
+          workingDir: /data  
+          ports:
+            - containerPort: 8088
+            - containerPort: 8086
+          volumeMounts:
+            - name: yunjiego-data
+              mountPath: /data/yunjiego
+              subPath: kangle-control-dev/yunjiego/yunjiego
+            - name: yunjiego-data
+              mountPath: /data/config
+              subPath: kangle-control-dev/yunjiego/config
+            - name: yunjiego-data
+              mountPath: /data/i18n
+              subPath: kangle-control-dev/yunjiego/i18n
+            - name: yunjiego-data
+              mountPath: /data/public
+              subPath: kangle-control-dev/yunjiego/public
+            - name: yunjiego-data
+              mountPath: /data/template
+              subPath: kangle-control-dev/yunjiego/template                 
+          env:
+            - name: TZ
+              value: "Asia/Shanghai"
+            - name: LANG
+              value: "en_US.UTF-8"
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "2048Mi"
+              cpu: "2000m"
+      volumes:
+        - name: yunjiego-data
+          persistentVolumeClaim:
+            claimName: gluster-claim-pub
